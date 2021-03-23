@@ -11,7 +11,8 @@ import {
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const TOKEN_STILL_VALID = "TOKEN_STILL_VALID";
 export const LOG_OUT = "LOG_OUT";
-export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS";
+export const STORY_DELETE_SUCCESS = "STORY_DELETE_SUCCESS";
+// export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS";
 
 const loginSuccess = (userWithToken) => {
   return {
@@ -27,9 +28,14 @@ const tokenStillValid = (userWithoutToken) => ({
 
 export const logOut = () => ({ type: LOG_OUT });
 
-export const storyPostSuccess = (story) => ({
-  type: STORY_POST_SUCCESS,
-  payload: story,
+// export const storyPostSuccess = (story) => ({
+//   type: STORY_POST_SUCCESS,
+//   payload: story,
+// });
+
+export const storyDeleteSuccess = (storyId) => ({
+  type: STORY_DELETE_SUCCESS,
+  payload: storyId,
 });
 
 export const signUp = (name, email, password) => {
@@ -123,7 +129,7 @@ export const postStory = (name, content, imageUrl) => {
     dispatch(appLoading());
 
     const response = await axios.post(
-      `${apiUrl}/stories/${space.id}`,
+      `${apiUrl}/spaces/${space.id}/stories`,
       {
         name,
         content,
@@ -137,10 +143,33 @@ export const postStory = (name, content, imageUrl) => {
     );
 
     // console.log("Yep!", response);
-    dispatch(
-      showMessageWithTimeout("success", false, response.data.message, 3000)
-    );
-    dispatch(storyPostSuccess(response.data.story));
+    console.log("Yep!", response);
+
     dispatch(appDoneLoading());
+  };
+};
+
+// export const deleteStory = (storyId) => {
+//   return async (dispatch, getState) => {};
+// };
+
+export const deleteStory = (storyId) => {
+  return async (dispatch, getState) => {
+    dispatch(appLoading());
+    const { space, token } = selectUser(getState());
+    const spaceId = space.id;
+    // make an axios request to delete
+    // and console.log the response if success
+    try {
+      const res = await axios.delete(`${apiUrl}/story/${storyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("Story deleted?", res.data);
+      dispatch(storyDeleteSuccess(storyId));
+      dispatch(appDoneLoading());
+    } catch (e) {
+      console.error(e);
+    }
   };
 };

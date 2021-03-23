@@ -12,7 +12,7 @@ export default function SpacesCart() {
     dispatch(fetchSpaces());
   }, [dispatch]);
 
-  return !allSpaces ? (
+  return !Array.isArray(allSpaces) ? (
     <p>loading ...</p>
   ) : (
     allSpaces.map((space, key) => {

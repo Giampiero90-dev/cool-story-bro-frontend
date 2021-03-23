@@ -8,13 +8,15 @@ export default function StoryForm() {
   const [imageUrl, setImageUrl] = useState(
     "https://source.unsplash.com/1600x900/?"
   );
+  const [message, set_message] = useState("");
 
-  const dispatch = useDispatch(postStory());
+  const dispatch = useDispatch();
 
   const onFormSubmit = (e) => {
     e.preventDefault();
     //   dispatch(addProduct(name, description, history));
     dispatch(postStory(name, content, imageUrl));
+    set_message("Success!");
   };
 
   return (
@@ -48,8 +50,11 @@ export default function StoryForm() {
             onChange={(e) => setImageUrl(e.target.value)}
           />
         </div>
+        <img src={imageUrl} alt="anything" />
+
         <button type="submit">Submit</button>
       </form>
+      <h3>{message}</h3>
     </div>
   );
 }
